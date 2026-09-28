@@ -1,4 +1,6 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { User, Sparkles, AlertCircle, FileText } from 'lucide-react';
 import { SourceCitation } from './SourceCitation.jsx';
 
@@ -25,8 +27,27 @@ export function MessageItem({ message, onSelectSource }) {
           </div>
         )}
 
-        <div className="message-text">
-          {message.content}
+        {/* Formatted Markdown Content */}
+        <div className="markdown-content">
+          {isUser ? (
+            <div style={{ whiteSpace: 'pre-wrap' }}>{message.content}</div>
+          ) : (
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                table: ({ node, ...props }) => (
+                  <div className="table-responsive-wrapper">
+                    <table {...props} />
+                  </div>
+                ),
+                a: ({ node, ...props }) => (
+                  <a {...props} target="_blank" rel="noopener noreferrer" />
+                )
+              }}
+            >
+              {message.content}
+            </ReactMarkdown>
+          )}
         </div>
 
         {!isUser && message.sources && message.sources.length > 0 && (
@@ -36,7 +57,7 @@ export function MessageItem({ message, onSelectSource }) {
           />
         )}
 
-        <div style={{ marginTop: '8px', fontSize: '0.68rem', color: isUser ? 'rgba(255,255,255,0.6)' : 'var(--text-muted)', textAlign: isUser ? 'right' : 'left' }}>
+        <div style={{ marginTop: '10px', fontSize: '0.68rem', color: isUser ? 'rgba(255,255,255,0.6)' : 'var(--text-muted)', textAlign: isUser ? 'right' : 'left' }}>
           {message.timestamp} {message.metadata?.latencyMs ? `• ${(message.metadata.latencyMs / 1000).toFixed(2)}s` : ''}
         </div>
       </div>
