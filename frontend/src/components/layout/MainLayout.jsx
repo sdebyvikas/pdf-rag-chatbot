@@ -1,9 +1,9 @@
-import React from 'react';
-import { Sidebar } from './Sidebar.jsx';
-import { Navbar } from './Navbar.jsx';
-import { ChatArea } from '../../features/chat/components/ChatArea.jsx';
-import { ChatInput } from '../../features/chat/components/ChatInput.jsx';
-import { SourceDrawer } from '../../features/chat/components/SourceDrawer.jsx';
+import React from "react";
+import { Sidebar } from "./Sidebar.jsx";
+import { Navbar } from "./Navbar.jsx";
+import { ChatArea } from "../../features/chat/components/ChatArea.jsx";
+import { ChatInput } from "../../features/chat/components/ChatInput.jsx";
+import { SourceDrawer } from "../../features/chat/components/SourceDrawer.jsx";
 
 export function MainLayout({
   messages,
@@ -19,7 +19,7 @@ export function MainLayout({
   onDeleteDoc,
   onClearAll,
   isLoadingDocs,
-  onRefreshDocs
+  onRefreshDocs,
 }) {
   return (
     <div className="app-container">
@@ -49,10 +49,7 @@ export function MainLayout({
           onSampleClick={onSendMessage}
         />
 
-        <ChatInput
-          onSendMessage={onSendMessage}
-          isLoading={isLoading}
-        />
+        <ChatInput onSendMessage={onSendMessage} isLoading={isLoading} />
       </main>
 
       {/* Source Citation Inspector Drawer */}

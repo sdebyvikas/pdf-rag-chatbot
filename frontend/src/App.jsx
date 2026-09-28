@@ -1,7 +1,7 @@
-import React from 'react';
-import { MainLayout } from './components/layout/MainLayout.jsx';
-import { useChat } from './features/chat/hooks/useChat.js';
-import { useDocuments } from './features/documents/hooks/useDocuments.js';
+import React from "react";
+import { MainLayout } from "./components/layout/MainLayout.jsx";
+import { useChat } from "./features/chat/hooks/useChat.js";
+import { useDocuments } from "./features/documents/hooks/useDocuments.js";
 
 export default function App() {
   const {
@@ -10,7 +10,7 @@ export default function App() {
     sendMessage,
     clearChat,
     activeSourceModal,
-    setActiveSourceModal
+    setActiveSourceModal,
   } = useChat();
 
   const {
@@ -21,7 +21,7 @@ export default function App() {
     uploadFiles,
     removeDoc,
     clearAll,
-    refreshDocuments
+    refreshDocuments,
   } = useDocuments();
 
   return (

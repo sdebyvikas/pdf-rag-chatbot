@@ -1,8 +1,8 @@
-import { config } from '../../config/env.js';
+import { config } from "../../config/env.js";
 
 /**
  * Splits text into overlapping chunks using paragraph, sentence, and word boundaries.
- * 
+ *
  * @param {string} text - Raw document text
  * @param {object} options - Overrides for chunkSize and overlap
  * @returns {Array<object>} Array of chunk objects with text and metadata
@@ -11,11 +11,11 @@ export function chunkDocumentText(text, options = {}) {
   const chunkSize = options.chunkSize || config.chunkSize || 700;
   const overlap = options.chunkOverlap || config.chunkOverlap || 150;
 
-  if (!text || typeof text !== 'string') {
+  if (!text || typeof text !== "string") {
     return [];
   }
 
-  const cleanText = text.replace(/\r\n/g, '\n').trim();
+  const cleanText = text.replace(/\r\n/g, "\n").trim();
   if (cleanText.length <= chunkSize) {
     return [
       {
@@ -23,8 +23,8 @@ export function chunkDocumentText(text, options = {}) {
         text: cleanText,
         charCount: cleanText.length,
         startOffset: 0,
-        endOffset: cleanText.length
-      }
+        endOffset: cleanText.length,
+      },
     ];
   }
 
@@ -43,7 +43,7 @@ export function chunkDocumentText(text, options = {}) {
           text: finalChunk,
           charCount: finalChunk.length,
           startOffset: startIndex,
-          endOffset: cleanText.length
+          endOffset: cleanText.length,
         });
       }
       break;
@@ -51,12 +51,18 @@ export function chunkDocumentText(text, options = {}) {
 
     // Try to find a natural breaking point near targetEnd: newline, period, question mark, exclamation, or space
     let splitPoint = -1;
-    const searchWindow = cleanText.substring(Math.max(startIndex, targetEnd - 100), Math.min(cleanText.length, targetEnd + 50));
+    const searchWindow = cleanText.substring(
+      Math.max(startIndex, targetEnd - 100),
+      Math.min(cleanText.length, targetEnd + 50),
+    );
     const searchOffset = Math.max(startIndex, targetEnd - 100);
 
     // Look for paragraph break
-    const paragraphBreak = searchWindow.lastIndexOf('\n\n');
-    if (paragraphBreak !== -1 && (searchOffset + paragraphBreak) > startIndex + 100) {
+    const paragraphBreak = searchWindow.lastIndexOf("\n\n");
+    if (
+      paragraphBreak !== -1 &&
+      searchOffset + paragraphBreak > startIndex + 100
+    ) {
       splitPoint = searchOffset + paragraphBreak + 2;
     }
 
@@ -68,15 +74,18 @@ export function chunkDocumentText(text, options = {}) {
       while ((match = sentenceRegex.exec(searchWindow)) !== null) {
         lastSentenceEnd = match.index + 1;
       }
-      if (lastSentenceEnd !== -1 && (searchOffset + lastSentenceEnd) > startIndex + 100) {
+      if (
+        lastSentenceEnd !== -1 &&
+        searchOffset + lastSentenceEnd > startIndex + 100
+      ) {
         splitPoint = searchOffset + lastSentenceEnd + 1;
       }
     }
 
     // Otherwise look for whitespace
     if (splitPoint === -1) {
-      const lastSpace = searchWindow.lastIndexOf(' ');
-      if (lastSpace !== -1 && (searchOffset + lastSpace) > startIndex + 100) {
+      const lastSpace = searchWindow.lastIndexOf(" ");
+      if (lastSpace !== -1 && searchOffset + lastSpace > startIndex + 100) {
         splitPoint = searchOffset + lastSpace + 1;
       }
     }
@@ -93,7 +102,7 @@ export function chunkDocumentText(text, options = {}) {
         text: chunkContent,
         charCount: chunkContent.length,
         startOffset: startIndex,
-        endOffset: splitPoint
+        endOffset: splitPoint,
       });
       chunkIndex++;
     }
