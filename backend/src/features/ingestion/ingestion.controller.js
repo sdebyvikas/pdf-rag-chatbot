@@ -24,6 +24,14 @@ export async function uploadDocuments(req, res, next) {
       }
     }
 
+    if (processedDocs.length === 0 && errors.length > 0) {
+      return res.status(400).json({
+        success: false,
+        error: errors.map(e => `${e.fileName}: ${e.error}`).join('; '),
+        errors
+      });
+    }
+
     res.status(200).json({
       success: true,
       indexedCount: processedDocs.length,
