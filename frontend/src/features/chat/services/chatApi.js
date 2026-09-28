@@ -1,4 +1,4 @@
-export async function sendRagQuery({ question, history = [], topK = 4, model = 'llama-3.3-70b-versatile' }) {
+export async function sendRagQuery({ question, history = [], topK = 4, model }) {
   const response = await fetch('/api/rag/chat', {
     method: 'POST',
     headers: {
@@ -8,7 +8,7 @@ export async function sendRagQuery({ question, history = [], topK = 4, model = '
       question,
       history,
       topK,
-      model
+      ...(model ? { model } : {})
     })
   });
 

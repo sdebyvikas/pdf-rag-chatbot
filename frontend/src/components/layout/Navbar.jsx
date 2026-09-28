@@ -8,7 +8,7 @@ export function Navbar({ onClearChat, messageCount, onRefreshDocs }) {
         <h1 className="header-title">Enterprise Knowledge Assistant</h1>
         <div className="model-tag">
           <Zap size={12} color="#06b6d4" />
-          <span>Groq Llama 3.3 70B</span>
+          <span>Groq AI Engine</span>
         </div>
       </div>
 
