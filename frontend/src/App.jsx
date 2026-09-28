@@ -5,8 +5,14 @@ import { useDocuments } from './features/documents/hooks/useDocuments.js';
 
 export default function App() {
   const {
+    sessions,
+    activeSessionId,
+    currentSession,
     messages,
     isLoading,
+    createNewSession,
+    switchSession,
+    deleteSession,
     sendMessage,
     clearChat,
     activeSourceModal,
@@ -29,6 +35,12 @@ export default function App() {
 
   return (
     <MainLayout
+      sessions={sessions}
+      activeSessionId={activeSessionId}
+      currentSession={currentSession}
+      onNewChat={createNewSession}
+      onSwitchSession={switchSession}
+      onDeleteSession={deleteSession}
       messages={messages}
       isLoading={isLoading}
       onSendMessage={sendMessage}

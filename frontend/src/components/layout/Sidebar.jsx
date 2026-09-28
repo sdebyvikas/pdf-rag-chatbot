@@ -1,13 +1,27 @@
 import React, { useState } from 'react';
-import { Layers, Database, Sparkles, Server, Info, ShieldCheck } from 'lucide-react';
+import { Layers, MessageSquarePlus, MessageSquare, Database, Trash2, Server, FileText } from 'lucide-react';
 import { DocumentUploader } from '../../features/documents/components/DocumentUploader.jsx';
 import { DocumentList } from '../../features/documents/components/DocumentList.jsx';
 
-export function Sidebar({ documents, onUpload, isUploading, uploadError, onDeleteDoc, onClearAll, isLoadingDocs }) {
-  const [activeTab, setActiveTab] = useState('docs'); // 'docs' | 'settings'
+export function Sidebar({
+  sessions = [],
+  activeSessionId,
+  onNewChat,
+  onSwitchSession,
+  onDeleteSession,
+  documents,
+  onUpload,
+  isUploading,
+  uploadError,
+  onDeleteDoc,
+  onClearAll,
+  isLoadingDocs
+}) {
+  const [activeTab, setActiveTab] = useState('chats'); // 'chats' | 'docs'
 
   return (
     <aside className="sidebar">
+      {/* Brand Header */}
       <div className="sidebar-header">
         <div className="brand-logo">
           <div className="brand-icon">
@@ -15,31 +29,80 @@ export function Sidebar({ documents, onUpload, isUploading, uploadError, onDelet
           </div>
           <div>
             <div className="brand-title">RAG Engine</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Semantic Knowledge Base</div>
+            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Semantic Intelligence</div>
           </div>
         </div>
         <span className="brand-badge">v1.0</span>
       </div>
 
+      {/* Tabs */}
       <div className="sidebar-tabs">
+        <button
+          className={`tab-btn ${activeTab === 'chats' ? 'active' : ''}`}
+          onClick={() => setActiveTab('chats')}
+        >
+          <MessageSquare size={15} />
+          <span>Chats ({sessions.length})</span>
+        </button>
         <button
           className={`tab-btn ${activeTab === 'docs' ? 'active' : ''}`}
           onClick={() => setActiveTab('docs')}
         >
           <Database size={15} />
-          <span>Documents</span>
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'info' ? 'active' : ''}`}
-          onClick={() => setActiveTab('info')}
-        >
-          <Info size={15} />
-          <span>Architecture</span>
+          <span>Docs ({documents.length})</span>
         </button>
       </div>
 
+      {/* Sidebar Content */}
       <div className="sidebar-content">
-        {activeTab === 'docs' ? (
+        {activeTab === 'chats' ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {/* New Chat Button */}
+            <button
+              className="btn-new-chat"
+              onClick={onNewChat}
+              title="Start a fresh conversation"
+            >
+              <MessageSquarePlus size={16} />
+              <span>+ New Chat</span>
+            </button>
+
+            {/* Sessions List */}
+            <div className="sessions-list">
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '4px 8px' }}>
+                Recent Conversations
+              </div>
+
+              {sessions.map(session => {
+                const isActive = session.id === activeSessionId;
+                const msgCount = session.messages?.length || 0;
+
+                return (
+                  <div
+                    key={session.id}
+                    className={`session-item ${isActive ? 'active' : ''}`}
+                    onClick={() => onSwitchSession(session.id)}
+                  >
+                    <div className="session-info">
+                      <MessageSquare size={15} color={isActive ? "#818cf8" : "#64748b"} />
+                      <span className="session-title" title={session.title}>
+                        {session.title || "Untitled Chat"}
+                      </span>
+                    </div>
+
+                    <button
+                      className="session-delete-btn"
+                      onClick={(e) => onDeleteSession(session.id, e)}
+                      title="Delete chat"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
           <>
             <DocumentUploader
               onUpload={onUpload}
@@ -54,34 +117,10 @@ export function Sidebar({ documents, onUpload, isUploading, uploadError, onDelet
               isLoading={isLoadingDocs}
             />
           </>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-            <div style={{ padding: '12px', background: 'var(--bg-surface-elevated)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontWeight: 600, color: '#f8fafc', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Sparkles size={14} color="#6366f1" />
-                <span>Feature-Based RAG Flow</span>
-              </div>
-              <ol style={{ paddingLeft: '18px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <li>Document upload & parsing (PDF/DOCX/TXT/MD)</li>
-                <li>Recursive character chunking with 150-char overlap</li>
-                <li>Local vectorization (MiniLM 384-dim)</li>
-                <li>Top-K hybrid cosine similarity retrieval</li>
-                <li>Grounded prompt assembly with citation IDs</li>
-                <li>Groq LPU ultra-fast answer synthesis</li>
-              </ol>
-            </div>
-
-            <div style={{ padding: '12px', background: 'rgba(16, 185, 129, 0.08)', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-              <div style={{ fontWeight: 600, color: '#6ee7b7', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <ShieldCheck size={14} />
-                <span>Strict Hallucination Control</span>
-              </div>
-              <div>The prompt forces the LLM to only answer if grounded in indexed documents.</div>
-            </div>
-          </div>
         )}
       </div>
 
+      {/* Sidebar Footer */}
       <div className="sidebar-footer">
         <div className="status-pill">
           <span className="status-dot" />

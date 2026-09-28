@@ -6,6 +6,12 @@ import { ChatInput } from '../../features/chat/components/ChatInput.jsx';
 import { SourceDrawer } from '../../features/chat/components/SourceDrawer.jsx';
 
 export function MainLayout({
+  sessions,
+  activeSessionId,
+  currentSession,
+  onNewChat,
+  onSwitchSession,
+  onDeleteSession,
   messages,
   isLoading,
   onSendMessage,
@@ -26,8 +32,13 @@ export function MainLayout({
 }) {
   return (
     <div className="app-container">
-      {/* Knowledge Base Sidebar */}
+      {/* Knowledge Base & Chat Sessions Sidebar */}
       <Sidebar
+        sessions={sessions}
+        activeSessionId={activeSessionId}
+        onNewChat={onNewChat}
+        onSwitchSession={onSwitchSession}
+        onDeleteSession={onDeleteSession}
         documents={documents}
         onUpload={onUpload}
         isUploading={isUploading}
@@ -40,6 +51,8 @@ export function MainLayout({
       {/* Main Chat Viewport */}
       <main className="main-viewport">
         <Navbar
+          activeTitle={currentSession?.title}
+          onNewChat={onNewChat}
           onClearChat={onClearChat}
           messageCount={messages.length}
           onRefreshDocs={onRefreshDocs}
