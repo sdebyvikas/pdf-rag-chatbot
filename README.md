@@ -1,6 +1,6 @@
 # Full-Stack Enterprise RAG System (Feature-Based Architecture)
 
-A complete Retrieval-Augmented Generation (RAG) platform with localized embeddings, sliding-window chunking, hybrid similarity retrieval, and Groq LPU inference.
+A complete Retrieval-Augmented Generation (RAG) platform with localized embeddings, sliding-window chunking, hybrid similarity retrieval, and Groq LPU inference .
 
 ---
 
@@ -37,7 +37,9 @@ Rag System/
 ## 🚀 Quick Start Guide
 
 ### 1. Configure Groq API Key
+
 Open [backend/.env](file:///c:/Users/Acer/Documents/Rag%20System/backend/.env) and insert your Groq API key:
+
 ```env
 PORT=5000
 GROQ_API_KEY=gsk_your_groq_api_key_here
@@ -45,12 +47,14 @@ GROQ_MODEL=llama-3.3-70b-versatile
 ```
 
 ### 2. Seed Sample Knowledge Base (Optional)
+
 ```bash
 cd backend
 npm run seed
 ```
 
 ### 3. Start the Backend Server
+
 ```bash
 cd backend
 npm run dev
@@ -58,6 +62,7 @@ npm run dev
 ```
 
 ### 4. Start the Frontend Application
+
 ```bash
 cd frontend
 npm run dev
