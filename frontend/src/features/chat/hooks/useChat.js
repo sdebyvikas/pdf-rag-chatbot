@@ -6,34 +6,68 @@ export function useChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeSourceModal, setActiveSourceModal] = useState(null); // Chunk object to inspect in drawer
+  const [attachedFiles, setAttachedFiles] = useState([]);
 
-  const sendMessage = useCallback(async (text, topK = 4) => {
-    if (!text || !text.trim() || isLoading) return;
+  const addAttachedFiles = useCallback((newFiles) => {
+    const fileArray = Array.from(newFiles);
+    setAttachedFiles(prev => [...prev, ...fileArray]);
+  }, []);
 
-    const trimmed = text.trim();
+  const removeAttachedFile = useCallback((index) => {
+    setAttachedFiles(prev => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const clearAttachedFiles = useCallback(() => {
+    setAttachedFiles([]);
+  }, []);
+
+  const sendMessage = useCallback(async (text, files = [], uploadHandler = null) => {
+    const trimmed = (text || '').trim();
+    const filesToUpload = files.length > 0 ? files : attachedFiles;
+
+    if (!trimmed && filesToUpload.length === 0) return;
+    if (isLoading) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    // 1. If files are attached, upload & vectorize them first
+    if (filesToUpload.length > 0 && uploadHandler) {
+      try {
+        await uploadHandler(filesToUpload);
+      } catch (err) {
+        setError(`Failed to process attached document: ${err.message}`);
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    // Default question if user just dropped a PDF without typing text
+    const finalQuestion = trimmed || (filesToUpload.length > 0 
+      ? `Summarize the attached document (${filesToUpload.map(f => f.name).join(', ')}) and highlight its key points.`
+      : '');
+
     const userMsgId = `user_${Date.now()}`;
     const userMessage = {
       id: userMsgId,
       role: 'user',
-      content: trimmed,
+      content: finalQuestion,
+      attachedFiles: filesToUpload.map(f => ({ name: f.name, size: f.size })),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
     setMessages(prev => [...prev, userMessage]);
-    setIsLoading(true);
-    setError(null);
+    clearAttachedFiles();
 
     try {
-      // Pass clean history
       const historyPayload = messages.map(m => ({
         role: m.role,
         content: m.content
       }));
 
       const res = await sendRagQuery({
-        question: trimmed,
-        history: historyPayload,
-        topK
+        question: finalQuestion,
+        history: historyPayload
       });
 
       const assistantMsgId = `asst_${Date.now()}`;
@@ -61,12 +95,13 @@ export function useChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [messages, isLoading]);
+  }, [messages, attachedFiles, isLoading, clearAttachedFiles]);
 
   const clearChat = useCallback(() => {
     setMessages([]);
     setError(null);
     setActiveSourceModal(null);
+    setAttachedFiles([]);
   }, []);
 
   return {
@@ -76,6 +111,10 @@ export function useChat() {
     sendMessage,
     clearChat,
     activeSourceModal,
-    setActiveSourceModal
+    setActiveSourceModal,
+    attachedFiles,
+    addAttachedFiles,
+    removeAttachedFile,
+    clearAttachedFiles
   };
 }

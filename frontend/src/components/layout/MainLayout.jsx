@@ -1,9 +1,9 @@
-import React from "react";
-import { Sidebar } from "./Sidebar.jsx";
-import { Navbar } from "./Navbar.jsx";
-import { ChatArea } from "../../features/chat/components/ChatArea.jsx";
-import { ChatInput } from "../../features/chat/components/ChatInput.jsx";
-import { SourceDrawer } from "../../features/chat/components/SourceDrawer.jsx";
+import React from 'react';
+import { Sidebar } from './Sidebar.jsx';
+import { Navbar } from './Navbar.jsx';
+import { ChatArea } from '../../features/chat/components/ChatArea.jsx';
+import { ChatInput } from '../../features/chat/components/ChatInput.jsx';
+import { SourceDrawer } from '../../features/chat/components/SourceDrawer.jsx';
 
 export function MainLayout({
   messages,
@@ -20,6 +20,9 @@ export function MainLayout({
   onClearAll,
   isLoadingDocs,
   onRefreshDocs,
+  attachedFiles,
+  onAddFiles,
+  onRemoveFile
 }) {
   return (
     <div className="app-container">
@@ -34,7 +37,7 @@ export function MainLayout({
         isLoadingDocs={isLoadingDocs}
       />
 
-      {/* Main Chat Interface */}
+      {/* Main Chat Viewport */}
       <main className="main-viewport">
         <Navbar
           onClearChat={onClearChat}
@@ -45,11 +48,20 @@ export function MainLayout({
         <ChatArea
           messages={messages}
           isLoading={isLoading}
+          isUploading={isUploading}
           onSelectSource={setActiveSourceModal}
-          onSampleClick={onSendMessage}
+          onSampleClick={(q) => onSendMessage(q, [], onUpload)}
+          onDropFiles={onAddFiles}
         />
 
-        <ChatInput onSendMessage={onSendMessage} isLoading={isLoading} />
+        <ChatInput
+          onSendMessage={(text, files) => onSendMessage(text, files, onUpload)}
+          isLoading={isLoading}
+          isUploading={isUploading}
+          attachedFiles={attachedFiles}
+          onAddFiles={onAddFiles}
+          onRemoveFile={onRemoveFile}
+        />
       </main>
 
       {/* Source Citation Inspector Drawer */}

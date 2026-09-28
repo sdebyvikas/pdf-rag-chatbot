@@ -1,6 +1,6 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { MessageItem } from './MessageItem.jsx';
-import { BookOpen, Sparkles, HelpCircle, ArrowRight } from 'lucide-react';
+import { Sparkles, HelpCircle, ArrowRight, UploadCloud, FileText } from 'lucide-react';
 
 const SAMPLE_QUESTIONS = [
   "What is the annual paid time off policy?",
@@ -9,24 +9,59 @@ const SAMPLE_QUESTIONS = [
   "What is the target query latency of the RAG system?"
 ];
 
-export function ChatArea({ messages, isLoading, onSelectSource, onSampleClick }) {
+export function ChatArea({ messages, isLoading, isUploading, onSelectSource, onSampleClick, onDropFiles }) {
   const bottomRef = useRef(null);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isLoading]);
+  }, [messages, isLoading, isUploading]);
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      onDropFiles(e.dataTransfer.files);
+    }
+  };
 
   return (
-    <div className="messages-container">
+    <div
+      className="messages-container"
+      style={{ position: 'relative' }}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      {/* Drag & Drop Visual Overlay */}
+      {isDragOver && (
+        <div className="chat-dropzone-overlay">
+          <UploadCloud size={48} color="#818cf8" />
+          <h3>Drop PDF or Document to Chat</h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+            The document will be automatically indexed into vector storage.
+          </p>
+        </div>
+      )}
+
       {messages.length === 0 ? (
         <div className="welcome-screen">
           <div className="welcome-icon">
             <Sparkles size={32} />
           </div>
-          <h2>Document Intelligence & RAG</h2>
+          <h2>Chat with Any Document</h2>
           <p>
-            Ask questions grounded strictly in your proprietary knowledge base. 
-            All answers are retrieved with cosine similarity rankings and direct source citations.
+            Attach a PDF using the paperclip 📎 button below, or ask questions grounded in your indexed knowledge base.
           </p>
 
           <div style={{ marginTop: '12px', width: '100%' }}>
@@ -56,6 +91,18 @@ export function ChatArea({ messages, isLoading, onSelectSource, onSampleClick })
             onSelectSource={onSelectSource}
           />
         ))
+      )}
+
+      {isUploading && (
+        <div className="message-bubble-wrapper assistant">
+          <div className="avatar assistant-avatar">
+            <UploadCloud size={18} className="spin" />
+          </div>
+          <div className="message-card" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
+            <span className="status-dot" />
+            <span>Parsing document, chunking, and creating local vector embeddings...</span>
+          </div>
+        </div>
       )}
 
       {isLoading && (

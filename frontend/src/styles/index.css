@@ -482,20 +482,73 @@ body {
   font-family: var(--font-mono);
 }
 
-/* Chat Input Bar */
 .chat-input-wrapper {
-  padding: 16px 32px 24px;
-  background: linear-gradient(to top, var(--bg-main) 80%, transparent);
+  padding: 12px 32px 24px;
+  background: linear-gradient(to top, var(--bg-main) 85%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.attached-files-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 4px;
+  animation: fadeIn 0.2s ease;
+}
+
+.attached-file-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--bg-surface-elevated);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  color: #c7d2fe;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.attached-file-chip .chip-name {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.attached-file-chip .chip-size {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.attached-file-chip .chip-remove-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.attached-file-chip .chip-remove-btn:hover {
+  color: var(--accent-danger);
+  background: rgba(239, 68, 68, 0.15);
 }
 
 .input-box-container {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   background: var(--bg-input);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: 8px 16px;
+  padding: 8px 14px;
   box-shadow: var(--shadow-md);
   transition: all 0.2s ease;
 }
@@ -503,6 +556,31 @@ body {
 .input-box-container:focus-within {
   border-color: var(--accent-primary);
   box-shadow: var(--shadow-glow);
+}
+
+.attach-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.attach-btn:hover:not(:disabled) {
+  background: rgba(99, 102, 241, 0.15);
+  color: #c7d2fe;
+}
+
+.attach-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .chat-textarea {
@@ -524,8 +602,8 @@ body {
 }
 
 .send-btn {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: var(--radius-md);
   background: var(--accent-primary);
   border: none;
@@ -535,6 +613,7 @@ body {
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .send-btn:hover:not(:disabled) {
@@ -545,6 +624,47 @@ body {
 .send-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+/* Chat dropzone overlay */
+.chat-dropzone-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 14, 23, 0.88);
+  backdrop-filter: blur(8px);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  border: 2px dashed var(--accent-primary);
+  border-radius: var(--radius-lg);
+  margin: 12px;
+  animation: fadeIn 0.2s ease;
+  pointer-events: none;
+}
+
+.chat-dropzone-overlay h3 {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  color: #c7d2fe;
+}
+
+.user-attached-doc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #f8fafc;
 }
 
 /* Document Management Components */

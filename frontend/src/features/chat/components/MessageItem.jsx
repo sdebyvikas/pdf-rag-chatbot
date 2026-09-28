@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Sparkles, AlertCircle } from 'lucide-react';
+import { User, Sparkles, AlertCircle, FileText } from 'lucide-react';
 import { SourceCitation } from './SourceCitation.jsx';
 
 export function MessageItem({ message, onSelectSource }) {
@@ -13,6 +13,18 @@ export function MessageItem({ message, onSelectSource }) {
       </div>
 
       <div className="message-card">
+        {/* Attached files badge in user message */}
+        {isUser && message.attachedFiles && message.attachedFiles.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+            {message.attachedFiles.map((file, idx) => (
+              <div key={idx} className="user-attached-doc-pill">
+                <FileText size={13} />
+                <span>{file.name || file}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="message-text">
           {message.content}
         </div>
